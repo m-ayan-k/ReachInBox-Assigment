@@ -1,0 +1,32 @@
+# Dependency directories
+node_modules/
+
+# Distribution directories
+dist/
+build/
+out/
+
+# Environment variables file
+.env
+
+token.json
+credentials.json
+
+# Editor and IDE files
+.vscode/
+.idea/
+
+# Compiled JavaScript files
+*.js
+
+# Logs
+*.log
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# TypeScript configuration file
+tsconfig.json
