@@ -7,21 +7,12 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-// export const generateReply = async (emailContent: string): Promise<string> => {
-//     const response = await openai.createCompletion({
-//         model: 'text-davinci-003', gpt-3.5-turbo-instruct
-//         prompt: `Generate a professional response for the following email content:\n\n${emailContent}`,
-//         max_tokens: 150,
-//     });
-
-//     return response.data.choices[0].text.trim();
-// };
-
+// Function to categorize email
 export const categorizeEmail = async  (emailContent:string) => {
     const response = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
       messages: [
-        { role: "system", content: "You are an email categorization assistant." },
+        { role: "system", content: "You are an email categorization assistant. Your task is to categorize emails based on their content" },
         { role: "user", content: `Categorize the following email: ${emailContent}\nCategories: Interested, Not Interested, More Information` }
       ],
     });
@@ -38,8 +29,8 @@ export async function generateReply(emailContent :string) {
     const response = await openai.chat.completions.create({
         model: "gpt-3.5-turbo",
         messages: [
-        { role: "system", content: "You are an email response assistant." },
-        { role: "user", content: `Generate a reply for the following email content: ${emailContent}.\nGenrate only body content.` }
+        { role: "system", content: "You are an email response assistant. Your task is to generate appropriate and professional replies to emails. Provide only the body content of the reply without any additional text." },
+        { role: "user", content: `Generate a reply for the following email content: ${emailContent}` }
         ],
     });
     if (response && response.choices && response.choices.length > 0 && response.choices[0].message.content) {

@@ -15,7 +15,7 @@ const TOKEN_PATH = path.join(__dirname, '../../token.json');
 const getOAuth2Client = () => {
     const credentials = JSON.parse(fs.readFileSync(path.join(__dirname, '../../credentials.json'), 'utf8'));
     const { client_secret, client_id, redirect_uris } = credentials.web;
-    return new google.auth.OAuth2(client_id, client_secret, process.env.REDIRECT_URI || redirect_uris[0]);
+    return new google.auth.OAuth2(client_id, client_secret,redirect_uris[0]);
 };
 
 export const authenticateGmail = (req : Request, res: Response) => {
@@ -140,8 +140,8 @@ const getLabelId = async (gmail: any, category: string) => {
         console.log('category',category);
         
         const categoryPatterns = {
-            'Interested': /interested/i,
             'Not Interested': /not interested/i,
+            'Interested': /interested/i,
             'More Information': /more information/i,
         };
 
