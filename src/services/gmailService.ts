@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import { generateReply,categorizeEmail } from './openAIService';
 import {Request, Response } from "express";
+import { scheduleEmail } from '../bullmq/emailQueue';
 
 
 const SCOPES = ['https://mail.google.com/',
@@ -42,7 +43,7 @@ export const oauth2Callback = async (req : Request, res: Response) => {
     }
 };
 
-const loadCredentials = () => {
+export const loadCredentials = () => {
     const oAuth2Client = getOAuth2Client();
     if (fs.existsSync(TOKEN_PATH)) {
         const token = JSON.parse(fs.readFileSync(TOKEN_PATH, 'utf8'));
@@ -68,7 +69,7 @@ export const checkForNewEmails = async () => {
 
         const labelId = await getLabelId(gmail, category);
 
-        await addLabel(gmail, message.id, labelId);
+        // await addLabel(gmail, message.id, labelId);
 
         const reply = await generateReply(emailContent);
 
@@ -78,7 +79,15 @@ export const checkForNewEmails = async () => {
 
         const replySubject = subject.startsWith('Re:') ? subject : `Re: ${subject}`;
 
-        await sendMessage(gmail, senderEmail, replySubject, reply, message.id);
+        const delay = 15000; // 15 sec delay
+
+        await scheduleEmail({
+            replyTo: senderEmail,
+            replySubject,
+            message: reply,
+            messageId: message.id,
+            labelId
+        }, delay);
     }
 };
 
@@ -87,7 +96,7 @@ const getMessage = async (gmail: any, messageId: any) => {
     return res.data;
 };
 
-const sendMessage = async (gmail: any, replyTo: string, replySubject: string, message: string, messageId: any) => {
+export const sendMessage = async (gmail: any, replyTo: string, replySubject: string, message: string, messageId: any) => {
 
     // const raw = `To: ${replyTo}\r\nSubject: ${replySubject}\r\n\r\n${message}`;
 
@@ -116,7 +125,7 @@ const sendMessage = async (gmail: any, replyTo: string, replySubject: string, me
 };
 
 
-const addLabel = async (gmail: any, messageId: any, labelId: any) => {
+export const addLabel = async (gmail: any, messageId: any, labelId: any) => {
     try {
         const response = await gmail.users.messages.modify({
             userId: 'me',

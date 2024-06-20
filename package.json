@@ -5,7 +5,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
-    "start": "nodemon --exec ts-node src/app.ts"
+    "start": "nodemon --exec ts-node src/app.ts",
+    "worker": "nodemon --exec ts-node src/bullmq/emailWorker.ts"
   },
   "keywords": [],
   "author": "",
@@ -17,6 +18,7 @@
     "@types/express": "^4.17.21",
     "@types/node": "^20.14.2",
     "body-parser": "^1.20.2",
+    "bullmq": "^5.8.2",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "googleapis": "^140.0.0",
